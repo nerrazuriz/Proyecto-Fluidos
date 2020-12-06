@@ -1,12 +1,21 @@
 import pygame
+from parametros import *
+from clases import Button
+
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
-
 pygame.display.set_caption('Simulación Buzo')
+
+### Botones
+button1 = Button((750, 40), (40, 40), 'water.png')
+button2 = Button((750, 90), (40, 40), 'snorkel.png')
 
 
 mar = pygame.image.load('mar.jpg')
 mar = pygame.transform.scale(mar, (800, 600))
+
+myfont = pygame.font.SysFont("monospace", 15)
+cosas = myfont.render('Cambia el objeto:', 1, (0,0,0))
 
 
 myfont = pygame.font.SysFont("monospace", 20)
@@ -16,24 +25,40 @@ def profundidad(y):
 
 myfont = pygame.font.SysFont("monospace", 20)
 def presion(y):
-    label = myfont.render("Presión: " + str(int(y * 9.806)) + "kPa", 1, (0,0,0))
+    label = myfont.render("Presión: " + str(int(y * rho * g + p_atm)) + "kPa", 1, (0,0,0))
     screen.blit(label, (50, 80))
 
 
-playerImg = pygame.image.load('snorkel.png')
-playerImg = pygame.transform.scale(playerImg, (60, 60))
+buzo = pygame.image.load('snorkel.png')
+buzo = pygame.transform.scale(buzo, (60, 60))
+botella = pygame.image.load('water.png')
+botella = pygame.transform.scale(botella, (60, 60))
+
 playerX = 350
-playerY = 250
+playerY = 0
 playerX_change = 0
 playerY_change = 0
 
 def player(x, y):
-    screen.blit(playerImg, (x, y))
+    if button1.apretado == False and button2.apretado == False:
+        screen.blit(buzo, (x, y))
+        
+    if button2.apretado == True:
+        screen.blit(buzo, (x, y))
+        button1.apretado = False
+     
+    if button1.apretado == True:
+        screen.blit(botella, (x, y))
+        button2.apretado = False
+      
 
+######### LOOP PRINCIPAL ##########
 running = True
 while running:
     screen.blit(mar, (0, 0))
+    screen.blit(cosas, (640, 10))
 
+### Movimiento
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -52,12 +77,32 @@ while running:
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
                 playerY_change = 0
 
+        #handler de botones
+        button1.event_handler(event)
+        button2.event_handler(event)
+
 
     playerX += playerX_change
     playerY += playerY_change
+
+### Limites de la pantalla
+    if  playerX < 0:
+        playerX = 0
+    elif playerX > 740:
+        playerX = 740
+    if playerY < 0:
+        playerY = 0
+    elif playerY > 540:
+        playerY = 540
+
     player(playerX, playerY)
 
     profundidad(playerY)
     presion(playerY)
 
+    button1.draw(screen)
+    button2.draw(screen)
+
     pygame.display.update()
+
+    
