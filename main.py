@@ -5,6 +5,7 @@ from clases import Button
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Simulación Buzo')
+botella_apretada = False
 
 ### Botones
 button1 = Button((750, 40), (40, 40), 'water.png')
@@ -28,6 +29,11 @@ def presion(y):
     label = myfont.render("Presión: " + str(int(y * rho * g + p_atm)) + "kPa", 1, (0,0,0))
     screen.blit(label, (50, 80))
 
+myfont = pygame.font.SysFont("monospace", 20)
+def volumen(y):
+    label = myfont.render("Volumen botella: " + str(round((int(R * T * n)/int(y * rho * g + p_atm)),2)) + " L", 1, (0,0,0))
+    screen.blit(label, (50, 110))
+
 
 buzo = pygame.image.load('snorkel.png')
 buzo = pygame.transform.scale(buzo, (60, 60))
@@ -46,11 +52,14 @@ def player(x, y):
     if button2.apretado == True:
         screen.blit(buzo, (x, y))
         button1.apretado = False
-     
+        
     if button1.apretado == True:
         screen.blit(botella, (x, y))
         button2.apretado = False
+        botella_apretada = True
+
       
+
 
 ######### LOOP PRINCIPAL ##########
 running = True
@@ -99,6 +108,9 @@ while running:
 
     profundidad(playerY)
     presion(playerY)
+    if botella_apretada is True:
+        volumen(playerY)
+    
 
     button1.draw(screen)
     button2.draw(screen)
