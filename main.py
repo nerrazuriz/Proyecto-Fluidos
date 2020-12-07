@@ -5,7 +5,7 @@ from clases import Button
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Simulación Buzo')
-botella_apretada = False
+
 
 ### Botones
 button1 = Button((750, 40), (40, 40), 'water.png')
@@ -56,7 +56,6 @@ def player(x, y):
     if button1.apretado == True:
         screen.blit(botella, (x, y))
         button2.apretado = False
-        botella_apretada = True
 
       
 
@@ -108,7 +107,7 @@ while running:
 
     profundidad(playerY)
     presion(playerY)
-    if botella_apretada is True:
+    if button1.apretado:
         volumen(playerY)
     
 
